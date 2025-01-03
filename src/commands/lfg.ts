@@ -6,9 +6,14 @@ const slashCommand = new SlashCommandBuilder()
   .setDescription("Hello World LFG!");
 
 const execute = async (interaction: CommandInteraction) => {
-  await interaction.reply(
-    `Hello World LFG! ${interaction.user.tag} is looking for a group!`
-  );
+  await interaction.reply({
+    content: `Hello World LFG! ${interaction.user.tag} is looking for a group!`,
+    ephemeral: true,
+  });
+  await interaction.followUp({
+    content: `You have a group!`,
+    ephemeral: true,
+  });
 };
 
-export default { data: slashCommand, execute } as Command;
+export default { cooldown: 5, data: slashCommand, execute } as Command;

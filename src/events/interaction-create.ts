@@ -2,6 +2,8 @@ import { Events, Interaction, MessageFlags } from "discord.js";
 import commandsCollection from "../commands";
 import { DiscordUserEvent } from ".";
 
+// TODO: Implement Cooldowns
+
 const execute = async (interaction: Interaction) => {
   console.log((interaction as any).commandName);
 

@@ -11,4 +11,4 @@ const execute = async (interaction: CommandInteraction) => {
   );
 };
 
-export default { data: slashCommand, execute } as Command;
+export default { cooldown: 5, data: slashCommand, execute } as Command;

@@ -3,6 +3,7 @@ import lfg from "./lfg";
 import lfm from "./lfm";
 
 export type Command = {
+  cooldown?: number;
   data: any;
   execute: (interaction: any) => Promise<void>;
 };
