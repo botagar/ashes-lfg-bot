@@ -19,6 +19,10 @@ const slashCommand = new SlashCommandBuilder()
           value: "cleric",
         },
         {
+          name: "Fighter",
+          value: "fighter",
+        },
+        {
           name: "Mage",
           value: "mage",
         },
