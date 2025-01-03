@@ -1,19 +1,36 @@
+import { Activities } from "../enums/activities";
 import Player from "../models/player";
 import { GuildId } from "../types";
 
+export enum PlayerQueueStatus {
+  Queued,
+  Exists,
+}
+
 export default class PlayerQueue {
-  private _queue: Map<GuildId, [Date, Player]> = new Map();
+  readonly guildId: number;
+
+  private _queue: [Player, Date, Activities[]][] = [];
 
   /**
    *
    */
-  constructor() {}
-
-  add(guildId: number, player: Player) {
-    this._queue.set(guildId, [new Date(), player]);
+  constructor(guildId: GuildId) {
+    this.guildId = guildId;
   }
 
-  guild(guildId: number) {
-    return this._queue.get(guildId);
+  add(player: Player, activities: Activities[]): PlayerQueueStatus {
+    if (this._queue.find((p) => p[0].id === player.id)) {
+      return PlayerQueueStatus.Exists;
+    }
+
+    this._queue.push([player, new Date(), activities]);
+    return PlayerQueueStatus.Queued;
+  }
+
+  getPlayersInWaitFor(activities: Activities[]): Player[] {
+    return this._queue
+      .filter((p) => p[2].some((a) => activities.includes(a)))
+      .map((p) => p[0]);
   }
 }
