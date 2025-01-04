@@ -1,1 +1,1 @@
-export type GuildId = number;
+export type GuildId = string;

@@ -1,1 +1,1 @@
-export type DiscordUserId = number;
+export type DiscordUserId = string;
