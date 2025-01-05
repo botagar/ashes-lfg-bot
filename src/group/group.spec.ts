@@ -97,4 +97,6 @@ describe("Group", () => {
     const hasOpenSlot = group.hasOpenSlot([ClassType.Healer], 10);
     expect(hasOpenSlot).toBe(false);
   });
+
+  it.todo("should record discord voice channel id");
 });

@@ -1,7 +1,14 @@
-import { SlashCommandBuilder, CommandInteraction } from "discord.js";
+import {
+  SlashCommandBuilder,
+  CommandInteraction,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
+  ButtonInteraction,
+  ChannelType,
+} from "discord.js";
 import { Command } from ".";
 import Player from "../models/player";
-import { ClassNames } from "../enums/classNames";
 import PlayerLevelRange from "../models/playerLevelRange";
 import PlayerClassSelector from "../models/playerClassSelector";
 import Groups from "../group/groups";
@@ -78,7 +85,6 @@ const slashCommand = new SlashCommandBuilder()
   );
 
 const execute = async (interaction: CommandInteraction) => {
-  console.log(interaction);
   const guildId = interaction.guildId;
   if (!guildId) {
     await interaction.reply({
@@ -144,16 +150,82 @@ const execute = async (interaction: CommandInteraction) => {
   if (openGroup) {
     // openGroup.addPlayer(player);
     await interaction.followUp({
-      content: `You have been added to a group!`,
+      content: `A group has been found! Please join the channel which you've been pinged in.`,
       ephemeral: true,
     });
+    // TODO: Ping Player in Voice Channel
     return;
   }
 
-  await interaction.followUp({
-    content: `You have a group!`,
+  const yesButton = new ButtonBuilder()
+    .setCustomId("createGroupYes")
+    .setLabel("Create new Group")
+    .setStyle(ButtonStyle.Success);
+  const noButton = new ButtonBuilder()
+    .setCustomId("createGroupNo")
+    .setLabel("Wait for Existing Group")
+    .setStyle(ButtonStyle.Secondary);
+  const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    yesButton,
+    noButton
+  );
+  const response = await interaction.followUp({
+    content: `No Open Group Found. Would you like to start a new group?`,
     ephemeral: true,
+    components: [buttonRow],
   });
+
+  const collectorFilter: any = (i: ButtonInteraction) => {
+    return i.user.id === interaction.user.id;
+  };
+
+  try {
+    const confirmation = await response.awaitMessageComponent({
+      filter: collectorFilter,
+      time: 60_000,
+    });
+    await confirmation.deferUpdate();
+    if (confirmation.customId === "createGroupYes") {
+      Groups.getInstance().createGroup(guildId, activity, player);
+      const ashesVoiceCategory = interaction.guild?.channels.cache
+        .filter((c) => c.type === ChannelType.GuildCategory)
+        .filter((c) => c.name.toLowerCase().startsWith("aoc"));
+      const ashesVoiceChannels = interaction.guild?.channels.cache.filter(
+        (c) =>
+          c.type === ChannelType.GuildVoice &&
+          c.parent === ashesVoiceCategory?.values().next().value
+      );
+      console.log(ashesVoiceChannels);
+      const newGroupChannel = await interaction.guild?.channels.create({
+        name: `LFM ${activity}`,
+        type: ChannelType.GuildVoice,
+        parent: ashesVoiceCategory?.values().next().value,
+      });
+      await newGroupChannel?.send(
+        `${interaction.user} has created a group for ${activity}. Join the voice channel to participate!`
+      );
+      await newGroupChannel?.send(
+        `Use the /lfm command to configure your group.`
+      );
+
+      await confirmation.editReply({
+        content: `A new group has been created! Please join the channel which you've been mentioned in.`,
+        components: [],
+      });
+    } else if (confirmation.customId === "createGroupNo") {
+      await confirmation.editReply({
+        content: `No Worries! We'll ping you when a group is found.`,
+        components: [],
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    await interaction.followUp({
+      content: "Confirmation not received within 1 minute, cancelling",
+      components: [],
+      ephemeral: true,
+    });
+  }
 };
 
 export default { cooldown: 5, data: slashCommand, execute } as Command;
