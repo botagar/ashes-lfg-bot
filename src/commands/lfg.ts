@@ -66,6 +66,14 @@ const slashCommand = new SlashCommandBuilder()
           value: "EXP Farming",
         },
         {
+          name: "GearFarming",
+          value: "Gear Farming",
+        },
+        {
+          name: "EXPGearFarming",
+          value: "EXP/Gear Farming",
+        },
+        {
           name: "raiding",
           value: "Raiding",
         },
@@ -76,10 +84,6 @@ const slashCommand = new SlashCommandBuilder()
         {
           name: "Questing",
           value: "Questing",
-        },
-        {
-          name: "GearFarming",
-          value: "Gear Farming",
         }
       )
   );
@@ -186,7 +190,6 @@ const execute = async (interaction: CommandInteraction) => {
     });
     await confirmation.deferUpdate();
     if (confirmation.customId === "createGroupYes") {
-      Groups.getInstance().createGroup(guildId, activity, player);
       const ashesVoiceCategory = interaction.guild?.channels.cache
         .filter((c) => c.type === ChannelType.GuildCategory)
         .filter((c) => c.name.toLowerCase().startsWith("aoc"));
@@ -201,6 +204,20 @@ const execute = async (interaction: CommandInteraction) => {
         type: ChannelType.GuildVoice,
         parent: ashesVoiceCategory?.values().next().value,
       });
+      if (!newGroupChannel) {
+        await interaction.followUp({
+          content:
+            "Error: Unable to create new channel. Please alert the #guild-development channel to this error.",
+          ephemeral: true,
+        });
+        return;
+      }
+      Groups.getInstance().createGroup(
+        guildId,
+        newGroupChannel.id,
+        user.id,
+        activity
+      );
       await newGroupChannel?.send(
         `${interaction.user} has created a group for ${activity}. Join the voice channel to participate!`
       );

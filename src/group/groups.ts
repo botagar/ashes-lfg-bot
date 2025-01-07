@@ -1,6 +1,6 @@
 import { Activities } from "../enums/activities";
 import Player from "../models/player";
-import { GuildId } from "../types";
+import { DiscordUserId, GuildId, VoiceChannelId } from "../types";
 import Group from "./group";
 
 class Groups {
@@ -20,6 +20,16 @@ class Groups {
 
   public clear(): void {
     this.groups.clear();
+  }
+
+  findGroupByChannel(channelId: string): Group | undefined {
+    for (const groups of this.groups.values()) {
+      const group = groups.find((g) => g.channelId === channelId);
+      if (group) {
+        return group;
+      }
+    }
+    return undefined;
   }
 
   findOpenGroup(
@@ -42,10 +52,15 @@ class Groups {
     return openGroup;
   }
 
-  createGroup(guildId: GuildId, activity: Activities, player: Player): Group {
+  createGroup(
+    guildId: GuildId,
+    channelId: VoiceChannelId,
+    ownerId: DiscordUserId,
+    activity: Activities
+  ): Group {
     const existingGroups = this.groups.get(guildId) ?? [];
 
-    const newGroup = new Group(guildId, player, [activity]);
+    const newGroup = new Group(guildId, ownerId, channelId, [activity]);
     this.groups.set(guildId, [...existingGroups, newGroup]);
 
     return newGroup;

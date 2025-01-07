@@ -1,34 +1,34 @@
 import { ClassNames } from "../enums/classNames";
-import { ClassType } from "../enums/classTypes";
+import { ClassRole } from "../enums/classTypes";
 
 export default interface PlayerClass {
   name: ClassNames;
-  classTags: ClassType[];
+  classTags: ClassRole[];
 }
 
 export const Cleric: PlayerClass = {
   name: ClassNames.Cleric,
-  classTags: [ClassType.Healer],
+  classTags: [ClassRole.Healer],
 };
 
 export const Fighter: PlayerClass = {
   name: ClassNames.Fighter,
-  classTags: [ClassType.DPS, ClassType.MeleeDPS],
+  classTags: [ClassRole.DPS, ClassRole.MeleeDPS],
 };
 
 export const Mage: PlayerClass = {
   name: ClassNames.Mage,
-  classTags: [ClassType.DPS, ClassType.MagicDPS],
+  classTags: [ClassRole.DPS, ClassRole.MagicDPS],
 };
 
 export const Ranger: PlayerClass = {
   name: ClassNames.Ranger,
-  classTags: [ClassType.DPS, ClassType.RangeDPS],
+  classTags: [ClassRole.DPS, ClassRole.RangeDPS],
 };
 
 export const Rogue: PlayerClass = {
   name: ClassNames.Rogue,
-  classTags: [ClassType.DPS, ClassType.MeleeDPS],
+  classTags: [ClassRole.DPS, ClassRole.MeleeDPS],
 };
 
 export const Summoner: PlayerClass = {
@@ -38,10 +38,10 @@ export const Summoner: PlayerClass = {
 
 export const Bard: PlayerClass = {
   name: ClassNames.Bard,
-  classTags: [ClassType.Support],
+  classTags: [ClassRole.Support],
 };
 
 export const Tank: PlayerClass = {
   name: ClassNames.Tank,
-  classTags: [ClassType.Tank],
+  classTags: [ClassRole.Tank],
 };

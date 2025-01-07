@@ -1,7 +1,7 @@
-import { ClassType } from "../enums/classTypes";
+import { ClassRole } from "../enums/classTypes";
 import { LevelRange } from "../models/playerLevelRange";
 
 export type GroupSlot = {
-  classTypes: ClassType[];
+  classTypes: ClassRole[];
   levelRange: LevelRange;
 };

@@ -1,4 +1,5 @@
 import { Activities } from "../enums/activities";
+import { ClassRole } from "../enums/classTypes";
 import Player from "../models/player";
 import { GuildId } from "../types";
 
@@ -8,7 +9,7 @@ export enum PlayerQueueStatus {
 }
 
 export default class PlayerQueue {
-  readonly guildId: number;
+  readonly guildId: GuildId;
 
   private _queue: [Player, Date, Activities[]][] = [];
 
@@ -28,9 +29,15 @@ export default class PlayerQueue {
     return PlayerQueueStatus.Queued;
   }
 
-  getPlayersInWaitFor(activities: Activities[]): Player[] {
+  getPlayersInWaitForActivities(activities: Activities[]): Player[] {
     return this._queue
       .filter((p) => p[2].some((a) => activities.includes(a)))
+      .map((p) => p[0]);
+  }
+
+  getPlayersInWaitForAsRole(role: ClassRole) {
+    return this._queue
+      .filter((p) => p[0].playerClass.classTags.includes(role))
       .map((p) => p[0]);
   }
 }

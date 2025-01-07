@@ -3,8 +3,9 @@ import PlayerQueue, { PlayerQueueStatus } from "./playerQueue";
 import Player from "../models/player";
 import { Cleric, Mage } from "../models/playerClass";
 import { Activities } from "../enums/activities";
+import { ClassRole } from "../enums/classTypes";
 
-const guild1Id = 1;
+const guild1Id = "1234567890";
 
 describe("Player Queue", () => {
   let queue: PlayerQueue;
@@ -14,7 +15,7 @@ describe("Player Queue", () => {
   });
 
   it("should add new player to queue in guild", () => {
-    const player = new Player(123, "player 1", Mage, 1, guild1Id);
+    const player = new Player("123", "player 1", Mage, 1, guild1Id);
 
     const res = queue.add(player, [Activities.EXPFarming]);
 
@@ -22,7 +23,7 @@ describe("Player Queue", () => {
   });
 
   it("should not add new player to queue in guild if player already exists", () => {
-    const player = new Player(123, "player 1", Mage, 1, guild1Id);
+    const player = new Player("123", "player 1", Mage, 1, guild1Id);
 
     const res = queue.add(player, [Activities.EXPFarming]);
     const res2 = queue.add(player, [Activities.EXPFarming]);
@@ -32,21 +33,38 @@ describe("Player Queue", () => {
   });
 
   it("should return 0 players in fresh queue", () => {
-    const players = queue.getPlayersInWaitFor([Activities.EXPFarming]);
+    const players = queue.getPlayersInWaitForActivities([
+      Activities.EXPFarming,
+    ]);
 
     expect(players).toStrictEqual([]);
   });
 
   it("should return they players in queue for activity", () => {
-    const player = new Player(123, "player 1", Mage, 1, guild1Id);
-    const player2 = new Player(124, "player 2", Cleric, 2, guild1Id);
+    const player = new Player("123", "player 1", Mage, 1, guild1Id);
+    const player2 = new Player("124", "player 2", Cleric, 2, guild1Id);
 
     queue.add(player, [Activities.EXPFarming]);
     queue.add(player2, [Activities.EXPFarming]);
     queue.add(player2, [Activities.PvP]);
 
-    const players = queue.getPlayersInWaitFor([Activities.EXPFarming]);
+    const players = queue.getPlayersInWaitForActivities([
+      Activities.EXPFarming,
+    ]);
 
     expect(players).toStrictEqual([player, player2]);
+  });
+
+  it("should return they players in queue for a role", () => {
+    const player = new Player("123", "player 1", Mage, 1, guild1Id);
+    const player2 = new Player("124", "player 2", Cleric, 2, guild1Id);
+
+    queue.add(player, [Activities.EXPFarming]);
+    queue.add(player2, [Activities.EXPFarming]);
+    queue.add(player2, [Activities.PvP]);
+
+    const players = queue.getPlayersInWaitForAsRole(ClassRole.Healer);
+
+    expect(players).toStrictEqual([player2]);
   });
 });
