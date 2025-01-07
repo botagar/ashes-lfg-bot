@@ -6,6 +6,8 @@ import {
   ActionRowBuilder,
   ButtonInteraction,
   ChannelType,
+  Collection,
+  GuildMember,
 } from "discord.js";
 import { Command } from ".";
 import Player from "../models/player";
@@ -13,6 +15,8 @@ import PlayerLevelRange from "../models/playerLevelRange";
 import PlayerClassSelector from "../models/playerClassSelector";
 import Groups from "../group/groups";
 import { Activities } from "../enums/activities";
+import guildQueues from "../queue/guildQueues";
+import PlayerQueue from "../queue/playerQueue";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfg")
@@ -152,12 +156,28 @@ const execute = async (interaction: CommandInteraction) => {
   );
   console.log(openGroup);
   if (openGroup) {
-    // openGroup.addPlayer(player);
     await interaction.followUp({
-      content: `A group has been found! Please join the channel which you've been pinged in.`,
+      content: `A group has been found! Please join the channel which you've been mentioned in.`,
       ephemeral: true,
     });
-    // TODO: Ping Player in Voice Channel
+    const voiceChannelId = openGroup.channelId;
+    const voiceChannel = interaction.guild?.channels.cache.get(voiceChannelId);
+    const userAlreadyInChannel = (
+      voiceChannel?.members as Collection<string, GuildMember>
+    ).has(user.id);
+    console.log(userAlreadyInChannel);
+    if (userAlreadyInChannel) {
+      openGroup.acceptInvite(player.id);
+      return await interaction.followUp({
+        content: `${interaction.user} has joined the group.`,
+      });
+    }
+    if (voiceChannel && voiceChannel.type === ChannelType.GuildVoice) {
+      openGroup.invitePlayer(player);
+      await voiceChannel.send(
+        `${interaction.user} Please join this voice channel to join the group.`
+      );
+    }
     return;
   }
 
@@ -230,6 +250,12 @@ const execute = async (interaction: CommandInteraction) => {
         components: [],
       });
     } else if (confirmation.customId === "createGroupNo") {
+      let queue = guildQueues.get(guildId);
+      if (!queue) {
+        queue = new PlayerQueue(guildId);
+        guildQueues.set(guildId, queue);
+      }
+      queue.add(player, [activity]);
       await confirmation.editReply({
         content: `No Worries! We'll ping you when a group is found.`,
         components: [],

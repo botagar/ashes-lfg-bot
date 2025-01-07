@@ -4,7 +4,7 @@ import { Activities } from "../enums/activities";
 import { ClassRole } from "../enums/classTypes";
 import { GroupSlot } from "../types/groupSlot";
 import Player from "../models/player";
-import { Fighter } from "../models/playerClass";
+import { Cleric, Fighter } from "../models/playerClass";
 
 const GUILD_ID = "1234567890";
 const CHANNEL_ID = "9876543210";
@@ -103,5 +103,111 @@ describe("Group", () => {
     expect(hasOpenSlot).toBe(false);
   });
 
-  it.todo("should record discord voice channel id");
+  it("should record discord voice channel id", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+
+    group.setChannelId("123456789");
+
+    expect(group.channelId).toBe("123456789");
+  });
+
+  it("should invite a valid player to an open slot", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+    const groupSlot: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 1, max: 5 },
+    };
+
+    group.openSlot(groupSlot);
+
+    const player = new Player("userId", "userName", Cleric, 3, GUILD_ID);
+    const wasInvited = group.invitePlayer(player);
+    const invites = group.pendingInvites;
+
+    expect(wasInvited).toBe(true);
+    expect(invites.length).toBe(1);
+    expect(invites[0].player).toBe(player);
+  });
+
+  it("should not invite a player to an open slot if the player does not meet the slot requirements", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+    const groupSlot: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 1, max: 5 },
+    };
+
+    group.openSlot(groupSlot);
+
+    const player = new Player("userId", "userName", Fighter, 10, GUILD_ID);
+    const wasInvited = group.invitePlayer(player);
+    const invites = group.pendingInvites;
+
+    expect(wasInvited).toBe(false);
+    expect(invites.length).toBe(0);
+  });
+
+  it("should invite a player to a single open slot when multiple slots are available", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+    const groupSlot1: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 1, max: 5 },
+    };
+    const groupSlot2: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 6, max: 10 },
+    };
+
+    group.openSlot(groupSlot1);
+    group.openSlot(groupSlot2);
+
+    const player = new Player("userId", "userName", Cleric, 3, GUILD_ID);
+    const wasInvited = group.invitePlayer(player);
+    const invites = group.pendingInvites;
+
+    expect(wasInvited).toBe(true);
+    expect(invites.length).toBe(1);
+    expect(invites[0].player).toBe(player);
+    expect(invites[0].slot).toBe(groupSlot1);
+  });
+
+  it("should remove a player from pending invites when the player accepts the invite", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+    const groupSlot: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 1, max: 5 },
+    };
+
+    group.openSlot(groupSlot);
+
+    const player = new Player("userId", "userName", Cleric, 3, GUILD_ID);
+    group.invitePlayer(player);
+
+    const playerJoined = group.acceptInvite("userId");
+
+    expect(playerJoined).toBe(groupSlot);
+    const invites = group.pendingInvites;
+    expect(invites.length).toBe(0);
+
+    expect(group.openSlots.length).toBe(0);
+  });
+
+  it("should removes a player from pending invites and return slot to open slots on timeout", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+    const groupSlot: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 1, max: 5 },
+    };
+
+    group.openSlot(groupSlot);
+
+    const player = new Player("userId", "userName", Cleric, 3, GUILD_ID);
+    group.invitePlayer(player);
+
+    group.timeoutInvite(player);
+
+    const invites = group.pendingInvites;
+    expect(invites.length).toBe(0);
+
+    expect(group.openSlots.length).toBe(1);
+  });
 });

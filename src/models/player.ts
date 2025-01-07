@@ -10,4 +10,8 @@ export default class Player {
     public level: number,
     public guildId: GuildId
   ) {}
+
+  toString(): string {
+    return `${this.name} - level ${this.level} ${this.playerClass.name}`;
+  }
 }

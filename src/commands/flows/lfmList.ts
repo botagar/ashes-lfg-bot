@@ -2,11 +2,11 @@ import { CommandInteraction, CommandInteractionOption } from "discord.js";
 import PlayerQueue from "../../queue/playerQueue";
 import { GuildId } from "../../types";
 import { ClassRoleFromString } from "../../enums/classTypes";
+import guildQueues from "../../queue/guildQueues";
 
 const LFMListFlow = async (
   interaction: CommandInteraction,
-  subcommand: CommandInteractionOption,
-  guildQueues: Map<GuildId, PlayerQueue>
+  subcommand: CommandInteractionOption
 ) => {
   const { options } = subcommand;
   const guildId = interaction.guildId as GuildId;

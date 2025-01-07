@@ -4,11 +4,7 @@ import {
   ApplicationCommandOptionType,
 } from "discord.js";
 import { Command } from ".";
-import { GuildId } from "../types";
-import PlayerQueue from "../queue/playerQueue";
-import Groups from "../group/groups";
 import LFMHelpFlow from "./flows/lfmHelp";
-import { ClassRoleFromString } from "../enums/classTypes";
 import LFMListFlow from "./flows/lfmList";
 import LFMOpenFlow from "./flows/lfmOpen";
 
@@ -127,8 +123,6 @@ const slashCommand = new SlashCommandBuilder()
       )
   );
 
-const guildQueues = new Map<GuildId, PlayerQueue>();
-
 const execute = async (interaction: CommandInteraction) => {
   if (!interaction.isCommand()) return;
 
@@ -143,9 +137,12 @@ const execute = async (interaction: CommandInteraction) => {
     case "help":
       return await LFMHelpFlow(interaction);
     case "list":
-      return await LFMListFlow(interaction, interactionSubcommand, guildQueues);
+      return await LFMListFlow(interaction, interactionSubcommand);
     case "open":
       return await LFMOpenFlow(interaction);
+    case "close":
+      console.log("TODO: close");
+      break;
     default:
       break;
   }
