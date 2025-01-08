@@ -65,6 +65,14 @@ class Groups {
 
     return newGroup;
   }
+
+  deleteGroup(guildId: GuildId, channelId: VoiceChannelId): void {
+    const existingGroups = this.groups.get(guildId) ?? [];
+    const updatedGroups = existingGroups.filter(
+      (group) => group.channelId !== channelId
+    );
+    this.groups.set(guildId, updatedGroups);
+  }
 }
 
 export default Groups;

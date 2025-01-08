@@ -100,4 +100,19 @@ describe("Groups Singleton", () => {
 
     expect(openGroup).toBeUndefined();
   });
+
+  it("should delete group", () => {
+    groups.createGroup(
+      GUILD_ID,
+      CHANNEL_ID,
+      DEFAULT_OWNER_ID,
+      Activities.EXPFarming
+    );
+
+    groups.deleteGroup(GUILD_ID, CHANNEL_ID);
+
+    const existingGroup = groups.findGroupByChannel(CHANNEL_ID);
+
+    expect(existingGroup).toBeUndefined();
+  });
 });

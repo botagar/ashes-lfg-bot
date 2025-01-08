@@ -5,6 +5,7 @@ import { GroupSlot } from "../types/groupSlot";
 
 class Group {
   readonly guildId: GuildId;
+  readonly createdAt: Date = new Date();
   private _activities: string[];
   private _openSlots: GroupSlot[] = [];
   private _pendingInvites: {
