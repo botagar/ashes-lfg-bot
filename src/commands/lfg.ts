@@ -146,7 +146,7 @@ const execute = async (interaction: CommandInteraction) => {
     guildId
   );
   await interaction.reply({
-    content: `Searching for a group for [${player.name}] as a level [${player.level}] [${player.playerClass}] for [${activityInput?.value}]`,
+    content: `Searching for a group for [${player.name}] as a level [${player.level}] [${player.playerClass.name}] for [${activityInput?.value}]`,
     ephemeral: true,
   });
   const openGroup = Groups.getInstance().findOpenGroup(

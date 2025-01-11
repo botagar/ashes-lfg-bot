@@ -67,4 +67,32 @@ describe("Player Queue", () => {
 
     expect(players).toStrictEqual([player2]);
   });
+
+  it("should return the next player in queue for an activity", () => {
+    const player = new Player("123", "player 1", Mage, 1, guild1Id);
+    const player2 = new Player("124", "player 2", Mage, 2, guild1Id);
+    const player3 = new Player("125", "player 3", Mage, 25, guild1Id);
+    const player4 = new Player("126", "player 4", Mage, 21, guild1Id);
+
+    queue.add(player, [Activities.EXPFarming]);
+    queue.add(player2, [Activities.EXPFarming]);
+    queue.add(player3, [Activities.EXPFarming]);
+    queue.add(player2, [Activities.PvP]);
+    queue.add(player4, [Activities.PvP]);
+
+    let nextPlayer = queue.getNextPlayer(
+      [Activities.EXPFarming],
+      ClassRole.DPS
+    );
+    expect(nextPlayer).toStrictEqual(player);
+
+    nextPlayer = queue.getNextPlayer([Activities.EXPFarming], ClassRole.DPS);
+    expect(nextPlayer).toStrictEqual(player2);
+
+    nextPlayer = queue.getNextPlayer([Activities.Caravan], ClassRole.DPS);
+    expect(nextPlayer).toBeUndefined();
+
+    nextPlayer = queue.getNextPlayer([Activities.PvP], ClassRole.DPS);
+    expect(nextPlayer).toStrictEqual(player4);
+  });
 });

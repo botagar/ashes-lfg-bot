@@ -121,6 +121,12 @@ const slashCommand = new SlashCommandBuilder()
           .setDescription("The number of open spots for role.")
           .setRequired(true)
       )
+      .addNumberOption((option) =>
+        option
+          .setName("invite-timeout")
+          .setDescription("The duration an invite open. Default is 5 minutes.")
+          .setRequired(false)
+      )
   );
 
 const execute = async (interaction: CommandInteraction) => {

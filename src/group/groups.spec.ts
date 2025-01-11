@@ -66,6 +66,7 @@ describe("Groups Singleton", () => {
     group.openSlot({
       classTypes: [ClassRole.Support],
       levelRange: { min: 10, max: 20 },
+      inviteTimeout_ms: 60000,
     });
 
     const openGroup = groups.findOpenGroup(
@@ -90,6 +91,7 @@ describe("Groups Singleton", () => {
     group.openSlot({
       classTypes: [ClassRole.DPS],
       levelRange: { min: 20, max: 25 },
+      inviteTimeout_ms: 60000,
     });
 
     const openGroup = groups.findOpenGroup(

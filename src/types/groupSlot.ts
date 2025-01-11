@@ -4,4 +4,5 @@ import { LevelRange } from "../models/playerLevelRange";
 export type GroupSlot = {
   classTypes: ClassRole[];
   levelRange: LevelRange;
+  inviteTimeout_ms: number;
 };

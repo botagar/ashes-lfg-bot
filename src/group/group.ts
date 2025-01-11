@@ -13,6 +13,7 @@ class Group {
     slot: GroupSlot;
     invitedAt: Date;
   }[] = [];
+  private _timedOutPlayers: Player[] = [];
   private _ownerId: DiscordUserId;
   private _channelId: string;
 
@@ -52,6 +53,10 @@ class Group {
     return this._pendingInvites;
   }
 
+  public get timedOutPlayers(): Player[] {
+    return this._timedOutPlayers;
+  }
+
   public setOwnerId(ownerId: DiscordUserId): void {
     this._ownerId = ownerId;
   }
@@ -79,6 +84,14 @@ class Group {
   }
 
   public invitePlayer(player: Player): boolean {
+    if (
+      this._timedOutPlayers.some(
+        (timedOutPlayer) => timedOutPlayer.id === player.id
+      )
+    ) {
+      return false;
+    }
+
     const slotIndex = this._openSlots.findIndex((slot) => {
       return (
         slot.levelRange.min <= player.level &&
@@ -125,7 +138,9 @@ class Group {
       return;
     }
 
-    this._openSlots.push(this._pendingInvites[inviteIndex].slot);
+    const invite = this._pendingInvites[inviteIndex];
+    this._timedOutPlayers.push(invite.player);
+    this._openSlots.push(invite.slot);
     this._pendingInvites.splice(inviteIndex, 1);
   }
 }

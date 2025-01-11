@@ -68,6 +68,7 @@ describe("Group", () => {
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -82,6 +83,7 @@ describe("Group", () => {
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -95,6 +97,7 @@ describe("Group", () => {
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -116,6 +119,7 @@ describe("Group", () => {
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -134,6 +138,7 @@ describe("Group", () => {
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -151,10 +156,12 @@ describe("Group", () => {
     const groupSlot1: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
     const groupSlot2: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 6, max: 10 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot1);
@@ -175,6 +182,7 @@ describe("Group", () => {
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -191,11 +199,12 @@ describe("Group", () => {
     expect(group.openSlots.length).toBe(0);
   });
 
-  it("should removes a player from pending invites and return slot to open slots on timeout", () => {
+  it("should removes a player from pending invites and return slot to open slots on timeout and place player into timed out list", () => {
     const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
     const groupSlot: GroupSlot = {
       classTypes: [ClassRole.Healer],
       levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
     };
 
     group.openSlot(groupSlot);
@@ -209,5 +218,29 @@ describe("Group", () => {
     expect(invites.length).toBe(0);
 
     expect(group.openSlots.length).toBe(1);
+    expect(group.timedOutPlayers.length).toBe(1);
+    expect(group.timedOutPlayers[0]).toBe(player);
+  });
+
+  it("should not invite a player if that player has already timed out", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID);
+    const groupSlot: GroupSlot = {
+      classTypes: [ClassRole.Healer],
+      levelRange: { min: 1, max: 5 },
+      inviteTimeout_ms: 60000,
+    };
+
+    group.openSlot(groupSlot);
+
+    const player = new Player("userId", "userName", Cleric, 3, GUILD_ID);
+    group.invitePlayer(player);
+
+    group.timeoutInvite(player);
+
+    const wasInvited = group.invitePlayer(player);
+    const invites = group.pendingInvites;
+
+    expect(wasInvited).toBe(false);
+    expect(invites.length).toBe(0);
   });
 });

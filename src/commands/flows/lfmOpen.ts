@@ -10,6 +10,9 @@ import { GuildId } from "../../types";
 import { Activities } from "../../enums/activities";
 import { ClassRoleFromString } from "../../enums/classTypes";
 import PlayerLevelRange from "../../models/playerLevelRange";
+import guildQueues from "../../queue/guildQueues";
+
+const DEFAULT_INVITE_TIMEOUT_m = 5;
 
 const LFMOpenFlow = async (interaction: CommandInteraction) => {
   const guildId = interaction.guildId as GuildId;
@@ -22,8 +25,8 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
   }
   let isNewGroup = false;
   const voiceChannel = interaction.channel;
-  let channelGroup = Groups.getInstance().findGroupByChannel(voiceChannel.id);
-  if (!channelGroup) {
+  let group = Groups.getInstance().findGroupByChannel(voiceChannel.id);
+  if (!group) {
     const activitySelect = new StringSelectMenuBuilder()
       .setCustomId("activity")
       .setPlaceholder("Select group activity")
@@ -92,7 +95,7 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
       console.log(`CID[] creating group with activity: ${activity}`);
 
       const ownerId = interaction.user.id;
-      channelGroup = Groups.getInstance().createGroup(
+      group = Groups.getInstance().createGroup(
         guildId,
         voiceChannel.id,
         ownerId,
@@ -105,7 +108,7 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
       });
       isNewGroup = true;
       console.log(
-        `CID[${channelGroup.channelId}] ${interaction.user.displayName} created a new group with activity ${activity}`
+        `CID[${group.channelId}] ${interaction.user.displayName} created a new group with activity ${activity}`
       );
     } catch (e) {
       console.error(e);
@@ -126,6 +129,13 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
   const slotCount = slotInputs?.find(
     (si) => si.type === 10 && si.name === "count"
   )?.value as number;
+  const inviteTimeoutOption = slotInputs?.find(
+    (si) => si.type === 4 && si.name === "invite-timeout"
+  );
+  const inviteTimeout_m: number =
+    inviteTimeoutOption !== undefined
+      ? (inviteTimeoutOption.value as number)
+      : DEFAULT_INVITE_TIMEOUT_m;
   const classRole = ClassRoleFromString(selectedRole as string);
   const levelRange = new PlayerLevelRange(levelRangeInput as string);
   if (!classRole || !levelRange.isValid() || !slotCount) {
@@ -137,18 +147,29 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
   }
 
   console.log(
-    `CID[${channelGroup?.channelId}] ${interaction.user.displayName} is opening ${slotCount} slot(s) for ${classRole} with level range ${levelRange.min}-${levelRange.max}`
+    `CID[${group?.channelId}] ${interaction.user.displayName} is opening ${slotCount} slot(s) for ${classRole} with level range ${levelRange.min}-${levelRange.max}`
   );
+  const queue = guildQueues.get(guildId);
   const slot = {
     classTypes: [classRole],
     levelRange: { min: levelRange.min, max: levelRange.max },
+    inviteTimeout_ms: inviteTimeout_m * 60 * 1000,
   };
   for (let i = 0; i < slotCount; i++) {
-    channelGroup!.openSlot(slot);
+    group!.openSlot(slot);
+    if (queue) {
+      const player = queue.getNextPlayer(
+        group!.activities as Activities[],
+        classRole
+      );
+      if (player) {
+        group!.invitePlayer(player);
+      }
+    }
   }
 
   const confirmationMessage = `Slot opened for ${slotCount} ${classRole} with level range ${levelRange.min}-${levelRange.max}`;
-  console.log(`CID[${channelGroup?.channelId}] ${confirmationMessage}`);
+  console.log(`CID[${group?.channelId}] ${confirmationMessage}`);
 
   const responseMethod = isNewGroup ? "followUp" : "reply";
   await interaction[responseMethod]({
