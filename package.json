@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsup src/index.ts --minify",
     "deploy-commands": "ts-node src/deploy-commands.ts",
-    "dev": "dotenv -e .env.local -- nodemon src/index.ts",
+    "dev": "dotenv -e .env.local -- nodemon src/index.ts | pino-pretty",
     "lint": "eslint src/.",
     "start": "node src/index.ts",
     "test": "vitest run",
@@ -19,7 +19,8 @@
   "dependencies": {
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7",
-    "dotenv-cli": "^8.0.0"
+    "dotenv-cli": "^8.0.0",
+    "pino": "^9.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -27,6 +28,7 @@
     "globals": "^15.14.0",
     "jsdom": "^25.0.1",
     "nodemon": "^3.1.9",
+    "pino-pretty": "^13.0.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.5",
     "typescript-eslint": "^8.19.0",
