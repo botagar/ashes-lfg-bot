@@ -1,6 +1,7 @@
 import { ChannelType, Client } from "discord.js";
 import { performance } from "perf_hooks";
 import Groups from "../group/groups";
+import { Time } from "../utils/time";
 
 const channelAbandonmentTimeout_ms = 5 * 60 * 1000; // 5 minutes
 const channelCleanupInterval_ms = 60 * 1000; // 1 minute
@@ -30,19 +31,25 @@ export const initGroupChannelCleanup = (client: Client) => {
             );
             channel.delete();
           } else {
-            // TODO: Convert ms to human-readable format
+            const hrms = Time.millisecondsToHumanReadable(lifetime_ms);
             console.log(
-              `Group [${channel.name}] in guild [${guild.name}] has been inactive for ${lifetime_ms}ms.`
+              `Group [${channel.name}] in guild [${guild.name}] has been empty for ${hrms}.`
             );
           }
         }
       }
     });
     const end = performance.now();
-    console.log(
-      `Group cleanup took ${end - start}ms to process ${
-        voiceChannels.size
-      } channels.`
-    );
+    const elapsed = end - start;
+    if (elapsed <= 999) {
+      console.log(
+        `Group cleanup took ${elapsed}ms to process ${voiceChannels.size} channels.`
+      );
+    } else {
+      const hrms = Time.millisecondsToHumanReadable(elapsed);
+      console.log(
+        `Group cleanup took ${hrms} to process ${voiceChannels.size} channels.`
+      );
+    }
   }, channelCleanupInterval_ms);
 };
