@@ -1,35 +1,38 @@
-const { REST, Routes } = require("discord.js");
+import pino from "pino";
+import { REST, Routes } from "discord.js";
+
 import { commands } from "./commands";
 
 const commandsData = Object.values(commands).map((command) => command.data);
+if (!process.env.DISCORD_TOKEN) {
+  throw new Error("DISCORD_TOKEN is not defined");
+}
 const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
+const logger = pino({
+  level: process.env.LOG_LEVEL || "info",
+});
+
 type DeployCommandsProps = {
-  guildId: string;
+  clientId: string;
 };
 
-export async function deployCommands({ guildId }: DeployCommandsProps) {
+export async function deployCommands({ clientId }: DeployCommandsProps) {
   try {
-    console.log("Started refreshing application (/) commands.");
-    console.log(
-      "Commands data:",
-      commandsData.map((command) => {
+    logger.info("Started refreshing application (/) commands.");
+    logger.info({
+      msg: "Commands data:",
+      commands: commandsData.map((command) => {
         return { name: command.name, description: command.description };
-      })
-    );
+      }),
+    });
 
-    await rest.put(
-      Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId),
-      {
-        body: commandsData,
-      }
-    );
+    await rest.put(Routes.applicationCommands(clientId), {
+      body: commandsData,
+    });
 
-    console.log("Successfully reloaded application (/) commands.");
+    logger.info("Successfully reloaded application (/) commands.");
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 }
-
-// For global commands
-// Routes.applicationCommands(clientId)

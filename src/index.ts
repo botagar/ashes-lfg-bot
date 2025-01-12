@@ -1,10 +1,12 @@
 import "dotenv/config";
+
+import pino from "pino";
 import { Client, GatewayIntentBits } from "discord.js";
+
 import events from "./events";
 import { deployCommands } from "./deploy-commands";
 import OnVoceStateUpdate from "./events/voiceStateUpdate";
 import { initIntervalJobs } from "./intervals";
-import pino from "pino";
 
 const logger = pino({
   level: process.env.LOG_LEVEL || "info",
@@ -52,7 +54,7 @@ for (const event of events) {
 
 (async () => {
   logger.info("Deploying commands...");
-  await deployCommands({ guildId: process.env.DISCORD_DEV_SERVER_ID! });
+  await deployCommands({ clientId: process.env.DISCORD_CLIENT_ID! });
 })();
 
 OnVoceStateUpdate(client);
