@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  lfg_bot:
+    build:
+      context: .
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    volumes:
+      - ./logs:/var/logs/lfg_bot
