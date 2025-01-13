@@ -117,4 +117,17 @@ describe("Groups Singleton", () => {
 
     expect(existingGroup).toBeUndefined();
   });
+
+  it("should get group by guild id", () => {
+    groups.createGroup(
+      GUILD_ID,
+      CHANNEL_ID,
+      DEFAULT_OWNER_ID,
+      Activities.EXPFarming
+    );
+
+    const existingGroups: Group[] = groups.getGroupsInGuild(GUILD_ID);
+
+    expect(existingGroups).toHaveLength(1);
+  });
 });

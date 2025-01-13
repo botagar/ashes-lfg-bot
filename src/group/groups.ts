@@ -22,6 +22,10 @@ class Groups {
     this.groups.clear();
   }
 
+  getGroupsInGuild(GUILD_ID: string): Group[] {
+    return this.groups.get(GUILD_ID) ?? [];
+  }
+
   findGroupByChannel(channelId: string): Group | undefined {
     for (const groups of this.groups.values()) {
       const group = groups.find((g) => g.channelId === channelId);

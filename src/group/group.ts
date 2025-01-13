@@ -3,16 +3,18 @@ import Player from "../models/player";
 import { DiscordUserId, GuildId } from "../types";
 import { GroupSlot } from "../types/groupSlot";
 
+export type GroupInvite = {
+  player: Player;
+  slot: GroupSlot;
+  invitedAt: Date;
+};
+
 class Group {
   readonly guildId: GuildId;
   readonly createdAt: Date = new Date();
   private _activities: string[];
   private _openSlots: GroupSlot[] = [];
-  private _pendingInvites: {
-    player: Player;
-    slot: GroupSlot;
-    invitedAt: Date;
-  }[] = [];
+  private _pendingInvites: GroupInvite[] = [];
   private _timedOutPlayers: Player[] = [];
   private _ownerId: DiscordUserId;
   private _channelId: string;
@@ -45,11 +47,7 @@ class Group {
     return this._channelId;
   }
 
-  public get pendingInvites(): {
-    player: Player;
-    slot: GroupSlot;
-    invitedAt: Date;
-  }[] {
+  public get pendingInvites(): GroupInvite[] {
     return this._pendingInvites;
   }
 
