@@ -4,7 +4,7 @@ import Groups from "../group/groups";
 import logger from "../utils/logger";
 
 const INVITE_TIMEOUT_CHECK_INTERVAL_MS = 30000; // 30 seconds
-const DEFAULT_INVITE_TIMEOUT_MS = 60000; // 1 minute
+const DEFAULT_INVITE_TIMEOUT_MS = 300000; // 5 minutes
 
 export const initInviteTimeouts = (client: Client) => {
   setInterval(() => {
