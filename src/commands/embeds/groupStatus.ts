@@ -20,7 +20,10 @@ const GenerateGroupStatusEmbed = (group: Group): APIEmbed => {
     value: group.openSlots.reduce((acc, slot) => {
       const role = slot.classTypes.join(", ");
       const levelRange = `${slot.levelRange.min}-${slot.levelRange.max}`;
-      return `${acc}\n${role} Level: ${levelRange}`;
+      const newEntry = `${role} Level: ${levelRange}`;
+      return acc.length + newEntry.length + 1 <= 1024
+        ? `${acc}\n${newEntry}`
+        : acc;
     }, ""),
   };
 
