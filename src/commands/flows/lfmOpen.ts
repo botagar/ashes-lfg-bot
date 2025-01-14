@@ -119,6 +119,13 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
     }
   }
 
+  if (!group) {
+    return await interaction.reply({
+      content: `Error: Unable to create group.`,
+      ephemeral: true,
+    });
+  }
+
   const slotInputs = interaction.options.data[0]?.options;
   const selectedRole = slotInputs?.find(
     (si) => si.type === 3 && si.name === "role"
@@ -147,7 +154,7 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
   }
 
   console.log(
-    `CID[${group?.channelId}] ${interaction.user.displayName} is opening ${slotCount} slot(s) for ${classRole} with level range ${levelRange.min}-${levelRange.max}`
+    `CID[${group.channelId}] ${interaction.user.displayName} is opening ${slotCount} slot(s) for ${classRole} with level range ${levelRange.min}-${levelRange.max}`
   );
   const queue = guildQueues.get(guildId);
   const slot = {
@@ -155,15 +162,22 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
     levelRange: { min: levelRange.min, max: levelRange.max },
     inviteTimeout_ms: inviteTimeout_m * 60 * 1000,
   };
+  const groupChannel = interaction.guild?.channels.cache.get(group.channelId);
   for (let i = 0; i < slotCount; i++) {
-    group!.openSlot(slot);
+    group.openSlot(slot);
     if (queue) {
       const player = queue.getNextPlayer(
         group!.activities as Activities[],
         classRole
       );
       if (player) {
-        group!.invitePlayer(player);
+        group.invitePlayer(player);
+        const user = interaction.guild?.members.cache.get(player.id);
+        if (groupChannel && groupChannel.isVoiceBased()) {
+          groupChannel?.send(
+            `${user} has been invited to the group as a ${classRole}`
+          );
+        }
       }
     }
   }

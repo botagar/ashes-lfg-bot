@@ -17,6 +17,7 @@ import Groups from "../group/groups";
 import { Activities } from "../enums/activities";
 import guildQueues from "../queue/guildQueues";
 import PlayerQueue from "../queue/playerQueue";
+import logger from "../utils/logger";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfg")
@@ -187,7 +188,7 @@ const execute = async (interaction: CommandInteraction) => {
     .setStyle(ButtonStyle.Success);
   const noButton = new ButtonBuilder()
     .setCustomId("createGroupNo")
-    .setLabel("Wait for Existing Group")
+    .setLabel("Wait in Queue")
     .setStyle(ButtonStyle.Secondary);
   const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
     yesButton,
@@ -251,13 +252,32 @@ const execute = async (interaction: CommandInteraction) => {
       });
     } else if (confirmation.customId === "createGroupNo") {
       let queue = guildQueues.get(guildId);
+      logger.info({
+        msg: "Adding player to queue",
+        player: player,
+        activity: activity,
+      });
+      logger.debug({
+        msg: "Guild Queues",
+        queues: guildQueues,
+      });
       if (!queue) {
         queue = new PlayerQueue(guildId);
+        logger.info({
+          msg: "New Queue Created",
+          queue: queue,
+        });
+        queue.add(player, [activity]);
         guildQueues.set(guildId, queue);
+        console.debug(guildQueues);
+        logger.debug({
+          msg: "Guild Queues",
+          queues: Object.keys(guildQueues),
+        });
       }
       queue.add(player, [activity]);
       await confirmation.editReply({
-        content: `No Worries! We'll ping you when a group is found.`,
+        content: `No Worries! We'll ping you when a slot opens up for you.`,
         components: [],
       });
     }

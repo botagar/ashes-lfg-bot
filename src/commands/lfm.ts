@@ -7,6 +7,7 @@ import { Command } from ".";
 import LFMHelpFlow from "./flows/lfmHelp";
 import LFMListFlow from "./flows/lfmList";
 import LFMOpenFlow from "./flows/lfmOpen";
+import LFMStatusFlow from "./flows/lfmStatus";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfm")
@@ -127,6 +128,11 @@ const slashCommand = new SlashCommandBuilder()
           .setDescription("The duration an invite open. Default is 5 minutes.")
           .setRequired(false)
       )
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName("status")
+      .setDescription("Check the status of your group.")
   );
 
 const execute = async (interaction: CommandInteraction) => {
@@ -146,6 +152,8 @@ const execute = async (interaction: CommandInteraction) => {
       return await LFMListFlow(interaction, interactionSubcommand);
     case "open":
       return await LFMOpenFlow(interaction);
+    case "status":
+      return await LFMStatusFlow(interaction);
     case "close":
       console.log("TODO: close");
       break;
