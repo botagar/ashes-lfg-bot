@@ -61,10 +61,10 @@ export const initInviteTimeouts = (client: Client) => {
     const end = performance.now();
     const elapsed = end - start;
     if (elapsed <= 999) {
-      logger.info(`Invite Timeout took ${elapsed}ms to process`);
+      logger.info(`Invite Timeout scan took ${elapsed}ms to process`);
     } else {
       const hrms = Time.millisecondsToHumanReadable(elapsed);
-      logger.info(`Invite Timeout took ${hrms} to process`);
+      logger.info(`Invite Timeout scan took ${hrms} to process`);
     }
   }, INVITE_TIMEOUT_CHECK_INTERVAL_MS);
 };
