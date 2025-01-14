@@ -42,10 +42,7 @@ export const initInviteTimeouts = (client: Client) => {
             });
             if (channel && channel.isVoiceBased()) {
               const player = guild[1].members.cache.get(invite.player.id);
-              player &&
-                channel.send(
-                  `Invite for [${player}] has timed out. Please reopen the slot.`
-                );
+              player && channel.send(`Invite for [${player}] has timed out.`);
             } else {
               logger.warn({
                 msg: "Channel not found to alert group of timed out invite",

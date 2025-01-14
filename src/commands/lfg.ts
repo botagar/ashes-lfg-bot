@@ -18,6 +18,7 @@ import { Activities } from "../enums/activities";
 import guildQueues from "../queue/guildQueues";
 import PlayerQueue from "../queue/playerQueue";
 import logger from "../utils/logger";
+import { GenerateLFMHelpEmbed } from "./embeds/help";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfg")
@@ -239,13 +240,13 @@ const execute = async (interaction: CommandInteraction) => {
         user.id,
         activity
       );
+      const lfmHelpEmbed = GenerateLFMHelpEmbed();
+      await newGroupChannel?.send({
+        embeds: [lfmHelpEmbed],
+      });
       await newGroupChannel?.send(
         `${interaction.user} has created a group for ${activity}. Join the voice channel to participate!`
       );
-      await newGroupChannel?.send(
-        `Use the /lfm command to configure your group.`
-      );
-
       await confirmation.editReply({
         content: `A new group has been created! Please join the channel which you've been mentioned in.`,
         components: [],
