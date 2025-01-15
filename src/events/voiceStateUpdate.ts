@@ -15,9 +15,6 @@ const OnVoceStateUpdate = (client: Client) => {
       guild: guild?.id,
     });
     if (newState.channelId === null) {
-      console.log(
-        `user ${user?.displayName} left channel ${oldState.channelId} in guild ${guild?.name}`
-      );
       logger.debug({
         msg: "User left channel",
         user: user?.id,

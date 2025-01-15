@@ -100,7 +100,6 @@ const LFGRegisterFlow = async (
     const userAlreadyInChannel = (
       voiceChannel?.members as Collection<string, GuildMember>
     ).has(user.id);
-    console.log(userAlreadyInChannel);
     if (userAlreadyInChannel) {
       openGroup.acceptInvite(player.id);
       return await interaction.followUp({
@@ -153,7 +152,6 @@ const LFGRegisterFlow = async (
           c.type === ChannelType.GuildVoice &&
           c.parent === ashesVoiceCategory?.values().next().value
       );
-      console.log(ashesVoiceChannels);
       const newGroupChannel = await interaction.guild?.channels.create({
         name: `LFM ${activity}`,
         type: ChannelType.GuildVoice,

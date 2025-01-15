@@ -54,8 +54,6 @@ export default class PlayerQueue {
         p.player.playerClass.classTags.includes(role)
     );
     const player = playerQueue?.shift()?.player;
-    console.log(`Queue length: ${playerQueue.length}`);
-    console.log(JSON.stringify(this._queue));
 
     this._queue = this._queue.filter((p) => p.player.id !== player?.id);
 
