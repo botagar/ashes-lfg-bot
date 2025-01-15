@@ -95,4 +95,19 @@ describe("Player Queue", () => {
     nextPlayer = queue.getNextPlayer([Activities.PvP], ClassRole.DPS);
     expect(nextPlayer).toStrictEqual(player4);
   });
+
+  it("should remove player from queue", () => {
+    const player = new Player("123", "player 1", Mage, 1, guild1Id);
+    const player2 = new Player("124", "player 2", Cleric, 2, guild1Id);
+
+    queue.add(player, [Activities.EXPFarming]);
+    queue.add(player2, [Activities.EXPFarming]);
+
+    const removedPlayer = queue.removePlayer("123");
+
+    expect(removedPlayer).toStrictEqual(player);
+    expect(
+      queue.getPlayersInWaitForActivities([Activities.EXPFarming]).length
+    ).toBe(1);
+  });
 });

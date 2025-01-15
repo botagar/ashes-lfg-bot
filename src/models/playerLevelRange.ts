@@ -47,6 +47,17 @@ class PlayerLevelRange {
   isValid(): boolean {
     return this._isValid;
   }
+
+  toString(): string {
+    if (this._isValid) {
+      if (this._min === this._max) {
+        return `${this._level}`;
+      } else {
+        return `${this._min}-${this._max}`;
+      }
+    }
+    return "Invalid level range";
+  }
 }
 
 export default PlayerLevelRange;

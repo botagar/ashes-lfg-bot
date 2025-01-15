@@ -11,6 +11,7 @@ import { Activities } from "../../enums/activities";
 import { ClassRoleFromString } from "../../enums/classTypes";
 import PlayerLevelRange from "../../models/playerLevelRange";
 import guildQueues from "../../queue/guildQueues";
+import logger from "../../utils/logger";
 
 const DEFAULT_INVITE_TIMEOUT_m = 5;
 
@@ -92,7 +93,11 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
       }
 
       const activity = activityResponse.values[0] as Activities;
-      console.log(`CID[] creating group with activity: ${activity}`);
+      logger.info({
+        msg: "Creating group",
+        activity: activity,
+        channel: voiceChannel.id,
+      });
 
       const ownerId = interaction.user.id;
       group = Groups.getInstance().createGroup(
@@ -107,11 +112,14 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
         components: [],
       });
       isNewGroup = true;
-      console.log(
-        `CID[${group.channelId}] ${interaction.user.displayName} created a new group with activity ${activity}`
-      );
+      logger.info({
+        msg: "Group created",
+        owner: interaction.user.displayName,
+        activity: activity,
+        channel: voiceChannel.id,
+      });
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       await interaction.editReply({
         content: "Activity selection timed out.",
         components: [],
@@ -153,9 +161,14 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
     });
   }
 
-  console.log(
-    `CID[${group.channelId}] ${interaction.user.displayName} is opening ${slotCount} slot(s) for ${classRole} with level range ${levelRange.min}-${levelRange.max}`
-  );
+  logger.info({
+    msg: "Opening slot(s)",
+    group: group.channelId,
+    owner: interaction.user.displayName,
+    classRole: classRole,
+    levelRange: levelRange,
+    slotCount: slotCount,
+  });
   const queue = guildQueues.get(guildId);
   const slot = {
     classTypes: [classRole],
@@ -182,12 +195,23 @@ const LFMOpenFlow = async (interaction: CommandInteraction) => {
     }
   }
 
-  const confirmationMessage = `Slot opened for ${slotCount} ${classRole} with level range ${levelRange.min}-${levelRange.max}`;
-  console.log(`CID[${group?.channelId}] ${confirmationMessage}`);
+  logger.info({
+    msg: "Slot opened",
+    group: group.channelId,
+    owner: interaction.user.displayName,
+    classRole: classRole,
+    levelRange: levelRange,
+    slotCount: slotCount,
+  });
 
   const responseMethod = isNewGroup ? "followUp" : "reply";
+  logger.debug({
+    msg: "interaction replied?",
+    method: responseMethod,
+    replied: interaction.replied,
+  });
   await interaction[responseMethod]({
-    content: confirmationMessage,
+    content: `Slot opened for ${slotCount} ${classRole} with level range ${levelRange}`,
     ephemeral: true,
   });
 };

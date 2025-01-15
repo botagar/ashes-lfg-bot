@@ -8,6 +8,7 @@ import LFMHelpFlow from "./flows/lfmHelp";
 import LFMListFlow from "./flows/lfmList";
 import LFMOpenFlow from "./flows/lfmOpen";
 import LFMStatusFlow from "./flows/lfmStatus";
+import logger from "../utils/logger";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfm")
@@ -138,8 +139,11 @@ const slashCommand = new SlashCommandBuilder()
 const execute = async (interaction: CommandInteraction) => {
   if (!interaction.isCommand()) return;
 
-  console.log(interaction.options.data);
   const interactionSubcommand = interaction.options.data[0];
+  logger.debug({
+    msg: "Executing LFM Command",
+    subcommand: interactionSubcommand,
+  });
   if (!interactionSubcommand) return;
 
   const { name, type } = interactionSubcommand;
@@ -155,7 +159,7 @@ const execute = async (interaction: CommandInteraction) => {
     case "status":
       return await LFMStatusFlow(interaction);
     case "close":
-      console.log("TODO: close");
+      logger.info("TODO: close");
       break;
     default:
       break;

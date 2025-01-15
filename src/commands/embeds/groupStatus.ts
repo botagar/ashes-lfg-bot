@@ -3,6 +3,11 @@ import Group from "../../group/group";
 import { Time } from "../../utils/time";
 
 const GenerateGroupStatusEmbed = (group: Group): APIEmbed => {
+  const groupActivity: APIEmbedField = {
+    name: "Current Activity",
+    value: group.activities.join(", "),
+  };
+
   const pendingInvites: APIEmbedField = {
     name: `✉️ Pending Invites: ${group.pendingInvites.length}`,
     value: group.pendingInvites.reduce((acc, invite) => {
@@ -31,7 +36,7 @@ const GenerateGroupStatusEmbed = (group: Group): APIEmbed => {
     color: 0x0099ff,
     title: "Group Status",
     description: `Status of group associated with this channel.`,
-    fields: [pendingInvites, openSlots],
+    fields: [groupActivity, pendingInvites, openSlots],
     timestamp: new Date().toISOString(),
   };
 

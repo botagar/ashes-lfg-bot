@@ -3,6 +3,7 @@ import PlayerQueue from "../../queue/playerQueue";
 import { GuildId } from "../../types";
 import { ClassRoleFromString } from "../../enums/classTypes";
 import guildQueues from "../../queue/guildQueues";
+import logger from "../../utils/logger";
 
 const LFMListFlow = async (
   interaction: CommandInteraction,
@@ -12,7 +13,7 @@ const LFMListFlow = async (
   const guildId = interaction.guildId as GuildId;
 
   const role = options?.find((option) => option.name === "role")?.value;
-  console.log(`Listing players in queue for role: ${role}`);
+  logger.info(`Listing players in queue for role: ${role}`);
   if (!role) {
     return interaction.reply({
       content: `Role is required.`,

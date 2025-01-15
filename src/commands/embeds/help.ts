@@ -8,23 +8,39 @@ const GenerateLFGHelpEmbed = (): APIEmbed => {
       "/lfg"
     )} command.`,
   };
-  const lfgCommand: APIEmbedField = {
-    name: `Command`,
-    value: `${codeBlock("/lfg [class] [level] [activity]")}`,
+  const lfgRegisterSubcommand: APIEmbedField = {
+    name: `Subcommand Register`,
+    value: `${codeBlock("/lfg register [class] [level] [activity]")}`,
   };
-  const lfgCommandOptions: APIEmbedField = {
+  const lfgRegisterSubcommandOptions: APIEmbedField = {
     name: `Options`,
     value: `**Class**: Your current class.\n**Level**: Your current level (number between and including 1-25).\n**Activity**: The activity you want to do.`,
   };
-  const lfgExample: APIEmbedField = {
+  const lfgRegisterExample: APIEmbedField = {
     name: `Example`,
-    value: `${codeBlock("/lfg bard 10 EXPFarming")}`,
+    value: `${codeBlock("/lfg register bard 10 EXP Farming")}`,
+  };
+
+  const lfgLeaveSubcommand: APIEmbedField = {
+    name: `Subcommand Leave`,
+    value: `${codeBlock("/lfg leave")}`,
+  };
+  const lfgLeaveSubcommandExplanation: APIEmbedField = {
+    name: `Explanation`,
+    value: `This command will remove you from the queue.`,
   };
 
   const embed: APIEmbed = {
     color: 0xffff00,
     title: "lfg command help",
-    fields: [lfgSection, lfgCommand, lfgCommandOptions, lfgExample],
+    fields: [
+      lfgSection,
+      lfgRegisterSubcommand,
+      lfgRegisterSubcommandOptions,
+      lfgRegisterExample,
+      lfgLeaveSubcommand,
+      lfgLeaveSubcommandExplanation,
+    ],
     timestamp: new Date().toISOString(),
   };
 

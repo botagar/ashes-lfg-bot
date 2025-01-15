@@ -1,7 +1,7 @@
 import { Activities } from "../enums/activities";
 import { ClassRole } from "../enums/classTypes";
 import Player from "../models/player";
-import { GuildId } from "../types";
+import { DiscordUserId, GuildId } from "../types";
 
 export enum PlayerQueueStatus {
   Queued,
@@ -59,6 +59,12 @@ export default class PlayerQueue {
 
     this._queue = this._queue.filter((p) => p.player.id !== player?.id);
 
+    return player;
+  }
+
+  removePlayer(playerId: DiscordUserId): Player | undefined {
+    const player = this._queue.find((p) => p.player.id === playerId)?.player;
+    this._queue = this._queue.filter((p) => p.player.id !== playerId);
     return player;
   }
 }
