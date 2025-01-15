@@ -131,6 +131,9 @@ const slashCommand = new SlashCommandBuilder()
       )
   )
   .addSubcommand((subcommand) =>
+    subcommand.setName("close").setDescription("Close group.")
+  )
+  .addSubcommand((subcommand) =>
     subcommand
       .setName("status")
       .setDescription("Check the status of your group.")

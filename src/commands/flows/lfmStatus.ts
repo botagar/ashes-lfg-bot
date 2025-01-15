@@ -1,10 +1,8 @@
 import { APIEmbed, CommandInteraction, inlineCode } from "discord.js";
-import { GuildId } from "../../types";
 import Groups from "../../group/groups";
 import GenerateGroupStatusEmbed from "../embeds/groupStatus";
 
 const LFMStatusFlow = async (interaction: CommandInteraction) => {
-  const guildId = interaction.guildId as GuildId;
   const channel = interaction.channel;
 
   if (!channel || !channel.isVoiceBased()) {

@@ -1,8 +1,9 @@
 import { Client, Events } from "discord.js";
 import { DiscordUserEvent } from ".";
+import logger from "../utils/logger";
 
 const execute = async (client: Client) => {
-  console.log(`Ready! Logged in as [${client.user?.tag ?? "Unknown"}]`);
+  logger.info(`Ready! Logged in as [${client.user?.tag ?? "Unknown"}]`);
 };
 
 export default {
