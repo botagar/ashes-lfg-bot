@@ -5,6 +5,9 @@ describe("PlayerLevelRange", () => {
   it("should validate single level within range", () => {
     const levelRange = new PlayerLevelRange("15");
     expect(levelRange.isValid()).toBe(true);
+    expect(levelRange.level).toBe(15);
+    expect(levelRange.min).toBe(15);
+    expect(levelRange.max).toBe(15);
   });
 
   it("should be false for single level of 0", () => {

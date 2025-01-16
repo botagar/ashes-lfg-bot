@@ -22,6 +22,8 @@ class PlayerLevelRange {
 
     if (singleLevelPattern.test(this.levelRange)) {
       this._level = Number(this.levelRange);
+      this._min = this._level;
+      this._max = this._level;
       this._isValid = true;
     } else if (rangePattern.test(this.levelRange)) {
       const [start, end] = this.levelRange.split("-").map(Number);
