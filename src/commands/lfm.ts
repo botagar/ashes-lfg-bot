@@ -210,6 +210,14 @@ const execute = async (interaction: CommandInteraction) => {
       return await LFMListFlow(interaction, interactionSubcommand);
     case "open":
       return await LFMOpenFlow(interaction);
+    case "edit":
+      logger.info("Edit subcommand not implemented.");
+      interaction.reply({
+        content:
+          "Edit subcommand not implemented. Pester the dev, I'm sure he'll love it.",
+        ephemeral: true,
+      });
+      break;
     case "activity":
       return await LFMActivityFlow(interaction);
     case "status":
