@@ -10,22 +10,24 @@ const GenerateGroupStatusEmbed = (group: Group): APIEmbed => {
 
   const pendingInvites: APIEmbedField = {
     name: `✉️ Pending Invites: ${group.pendingInvites.length}`,
-    value: group.pendingInvites.reduce((acc, invite) => {
+    value: group.pendingInvites.reduce((acc, invite, index) => {
       const inviteDuration = Date.now() - invite.invitedAt.getTime();
-      return `${acc}\n${invite.player.name} as ${invite.slot.classTypes.join(
-        ", "
-      )} (lvl ${invite.slot.levelRange.min}-${
-        invite.slot.levelRange.max
-      }) ⏲️(${Time.millisecondsToHumanReadable(inviteDuration)})`;
+      return `${acc}\n${index}) ${
+        invite.player.name
+      } as ${invite.slot.classTypes.join(", ")} (lvl ${
+        invite.slot.levelRange.min
+      }-${invite.slot.levelRange.max}) ⏲️(${Time.millisecondsToHumanReadable(
+        inviteDuration
+      )})`;
     }, ""),
   };
 
   const openSlots: APIEmbedField = {
     name: `🔍 Number of Open Slots: ${group.openSlots.length}`,
-    value: group.openSlots.reduce((acc, slot) => {
+    value: group.openSlots.reduce((acc, slot, index) => {
       const role = slot.classTypes.join(", ");
       const levelRange = `${slot.levelRange.min}-${slot.levelRange.max}`;
-      const newEntry = `${role} Level: ${levelRange}`;
+      const newEntry = `${index}) ${role} Level: ${levelRange}`;
       return acc.length + newEntry.length + 1 <= 1024
         ? `${acc}\n${newEntry}`
         : acc;
