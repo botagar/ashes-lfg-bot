@@ -1,3 +1,4 @@
+import { Activities } from "../enums/activities";
 import { ClassRole } from "../enums/classTypes";
 import Player from "../models/player";
 import { DiscordUserId, GuildId } from "../types";
@@ -140,6 +141,10 @@ class Group {
     this._timedOutPlayers.push(invite.player);
     this._openSlots.push(invite.slot);
     this._pendingInvites.splice(inviteIndex, 1);
+  }
+
+  setActivity(activity: Activities) {
+    this._activities = [activity];
   }
 }
 

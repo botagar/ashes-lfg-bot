@@ -9,6 +9,8 @@ import LFMListFlow from "./flows/lfmList";
 import LFMOpenFlow from "./flows/lfmOpen";
 import LFMStatusFlow from "./flows/lfmStatus";
 import logger from "../utils/logger";
+import LFMCloseFlow from "./flows/lfmClose";
+import LFMActivityFlow from "./flows/lfmActivity";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfm")
@@ -135,6 +137,55 @@ const slashCommand = new SlashCommandBuilder()
   )
   .addSubcommand((subcommand) =>
     subcommand
+      .setName("activity")
+      .setDescription("Set the activity for your group.")
+      .addStringOption((option) =>
+        option
+          .setName("activity")
+          .setDescription("The activity your group is doing.")
+          .setRequired(true)
+          .addChoices(
+            {
+              name: "EXPFarming",
+              value: "EXP Farming",
+            },
+            {
+              name: "GearFarming",
+              value: "Gear Farming",
+            },
+            {
+              name: "EXPGearFarming",
+              value: "EXP/Gear Farming",
+            },
+            {
+              name: "PvP",
+              value: "PvP",
+            },
+            {
+              name: "Raiding",
+              value: "Raiding",
+            },
+            {
+              name: "Questing",
+              value: "Questing",
+            },
+            {
+              name: "Gathering",
+              value: "Gathering",
+            },
+            {
+              name: "Caravan",
+              value: "Caravan",
+            },
+            {
+              name: "Other",
+              value: "Other",
+            }
+          )
+      )
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
       .setName("status")
       .setDescription("Check the status of your group.")
   );
@@ -159,11 +210,12 @@ const execute = async (interaction: CommandInteraction) => {
       return await LFMListFlow(interaction, interactionSubcommand);
     case "open":
       return await LFMOpenFlow(interaction);
+    case "activity":
+      return await LFMActivityFlow(interaction);
     case "status":
       return await LFMStatusFlow(interaction);
     case "close":
-      logger.info("TODO: close");
-      break;
+      return await LFMCloseFlow(interaction);
     default:
       break;
   }

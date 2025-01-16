@@ -243,4 +243,14 @@ describe("Group", () => {
     expect(wasInvited).toBe(false);
     expect(invites.length).toBe(0);
   });
+
+  it("should set a different activity for the group", () => {
+    const group = new Group(GUILD_ID, DEFAULT_OWNER_ID, CHANNEL_ID, [
+      Activities.EXPFarming,
+    ]);
+
+    group.setActivity(Activities.Raiding);
+
+    expect(group.activities).toStrictEqual([Activities.Raiding]);
+  });
 });
