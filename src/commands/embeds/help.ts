@@ -1,5 +1,4 @@
 import { APIEmbed, APIEmbedField, codeBlock, inlineCode } from "discord.js";
-import { Time } from "../../utils/time";
 
 const GenerateLFGHelpEmbed = (): APIEmbed => {
   const lfgSection: APIEmbedField = {
@@ -62,6 +61,15 @@ const GenerateLFMHelpEmbed = (): APIEmbed => {
     value: `**Role**: The role you are looking for.\n**Level**: The level value or range you are looking for. (ie. 15 or 20-25)\n**Count**: The number of spots you are opening with these options.`,
   };
 
+  const lmfActivitySubcommand: APIEmbedField = {
+    name: `Subcommand Activity`,
+    value: `${codeBlock("/lfm activity [activity]")}`,
+  };
+  const lmfActivitySubcommandOptions: APIEmbedField = {
+    name: `Options`,
+    value: `**Activity**: The activity you are looking for.`,
+  };
+
   const lfmStatusSubcommand: APIEmbedField = {
     name: `Subcommand Status`,
     value: `${codeBlock("/lfm status")}`,
@@ -91,6 +99,8 @@ const GenerateLFMHelpEmbed = (): APIEmbed => {
       lfmSection,
       lfmOpenSubcommand,
       lfmOpenSubcommandOptions,
+      lmfActivitySubcommand,
+      lmfActivitySubcommandOptions,
       lfmStatusSubcommand,
       lfmStatusSubcommandExplanation,
       lfmListSubcommand,
