@@ -11,6 +11,7 @@ import LFMStatusFlow from "./flows/lfmStatus";
 import logger from "../utils/logger";
 import LFMCloseFlow from "./flows/lfmClose";
 import LFMActivityFlow from "./flows/lfmActivity";
+import LFMEditFlow from "./flows/lfmEdit";
 
 const slashCommand = new SlashCommandBuilder()
   .setName("lfm")
@@ -133,6 +134,11 @@ const slashCommand = new SlashCommandBuilder()
       )
   )
   .addSubcommand((subcommand) =>
+    subcommand
+      .setName("edit")
+      .setDescription("Edit the open slots in your group.")
+  )
+  .addSubcommand((subcommand) =>
     subcommand.setName("close").setDescription("Close group.")
   )
   .addSubcommand((subcommand) =>
@@ -211,13 +217,7 @@ const execute = async (interaction: CommandInteraction) => {
     case "open":
       return await LFMOpenFlow(interaction);
     case "edit":
-      logger.info("Edit subcommand not implemented.");
-      interaction.reply({
-        content:
-          "Edit subcommand not implemented. Pester the dev, I'm sure he'll love it.",
-        ephemeral: true,
-      });
-      break;
+      return await LFMEditFlow(interaction);
     case "activity":
       return await LFMActivityFlow(interaction);
     case "status":
